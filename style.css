@@ -1,0 +1,93 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 10px;
+}
+
+h1 {
+    font-size: 3.2rem;
+}
+
+h2 {
+    font-size: 2.8rem;
+}
+
+h3 {
+    font-size: 2.4rem;
+}
+
+h4 {
+    font-size: 2rem;
+}
+
+h5 {
+    font-size: 1.6rem;
+}
+
+p {
+    font-size: 1.2rem;
+}
+
+body {
+    height: 100vh;
+    width: 100vw;
+    display: grid;
+    grid-template-columns: 10% 90%;
+    grid-template-rows: 7.5% 85% 7.5%;
+}
+
+header {
+    grid-column: span 2;
+    grid-row: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#sidebar {
+    grid-column: 1;
+    grid-row: 2;
+    margin-right: auto;
+}
+
+.sbDiv {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: .5rem;
+    margin-bottom: 4rem;
+}
+
+.sbDiv button {
+    width: 12rem;
+    height: 3rem;
+    margin: .3rem;
+}
+
+.sbDiv input {
+    width: 12rem;
+    margin: .3rem;
+    padding-left: 3.3rem;
+}
+
+.sbDiv label {
+    font-size: 1.4rem;
+}
+
+#gameDisplay {
+    grid-column: 2;
+    grid-row: 2;
+}
+
+footer {
+    grid-column: 2;
+    grid-row: 3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-right: 10%;
+}
