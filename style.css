@@ -78,7 +78,7 @@ header {
     font-size: 1.4rem;
 }
 
-#gameDisplay {
+main {
     grid-column: 2;
     grid-row: 2;
 }
@@ -90,4 +90,10 @@ footer {
     justify-content: center;
     align-items: center;
     padding-right: 10%;
+}
+
+.gameTile {
+    background-color: blue;
+    width: 6rem;
+    height: 6rem;
 }
