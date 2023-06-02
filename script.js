@@ -13,7 +13,11 @@ const domManipulationModule = (function() {
                 } else if (j == 3) {
                     gameTile.id = `${i}c`;
                 };
+                gameState.tileArraySetter(gameTile.id);
                 document.getElementById('gameDisplay').appendChild(gameTile);
+                gameTile.addEventListener('click', function() {
+                    this.style.backgroundColor = 'blue';
+                });
             }
         }
     };
@@ -22,6 +26,25 @@ const domManipulationModule = (function() {
         boardInstantiation,
     };
     
+})();
+
+const gameState = (function() {
+    'use strict';
+
+    let tileArray = [];
+
+    let tileArraySetter = function(tile) {
+        tileArray.push(tile);
+    };
+
+    let tileArrayGetter = function() {
+        return tileArray;
+    }
+
+    return {
+        tileArraySetter,
+        tileArrayGetter,
+    };
 })();
 
 domManipulationModule.boardInstantiation();

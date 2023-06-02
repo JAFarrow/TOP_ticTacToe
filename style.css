@@ -92,10 +92,10 @@ main {
     grid-template-rows: 1fr 1fr 1fr;
     align-items: stretch;
     gap: 1rem;
-    width: 50%;
-    height: 65%;
+    width: 35%;
+    height: 45%;
     background-color: #000;
-    margin-right: 12%;
+    margin-right: 11%;
 }
 
 footer {
