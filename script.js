@@ -15,8 +15,11 @@ const domManipulationModule = (function() {
                 };
                 gameState.tileArraySetter(gameTile.id);
                 document.getElementById('gameDisplay').appendChild(gameTile);
+                // "Tile" div interaction event listener
                 gameTile.addEventListener('click', function() {
                     this.style.backgroundColor = 'blue';
+                    gameState.tileArrayPop(this.id);
+                    console.log(gameState.tileArrayGetter());
                 });
             }
         }
@@ -31,20 +34,32 @@ const domManipulationModule = (function() {
 const gameState = (function() {
     'use strict';
 
-    let tileArray = [];
+    let _tileArray = [];
 
-    let tileArraySetter = function(tile) {
-        tileArray.push(tile);
+    const tileArraySetter = function(tile) {
+        _tileArray.push(tile);
     };
 
-    let tileArrayGetter = function() {
-        return tileArray;
+    const tileArrayGetter = function() {
+        return _tileArray;
+    }
+
+    const tileArrayPop = function(selectedTile) {
+        let tileIndex = _tileArray.indexOf(`${selectedTile}`)
+        _tileArray.splice(tileIndex, 1);
     }
 
     return {
         tileArraySetter,
         tileArrayGetter,
+        tileArrayPop,
     };
 })();
+
+// const agentFactory = (name) => {
+//     'use strict';
+
+//     const  
+// };
 
 domManipulationModule.boardInstantiation();
