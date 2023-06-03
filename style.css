@@ -109,4 +109,17 @@ footer {
 
 .gameTile {
     background-color: #fff;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.gameTileCross {
+    background-image: url(assets/cross.svg);
+    background-size: 10rem;
+}
+
+.gameTileNought {
+    background-image: url(assets/nought.svg);
+
+    background-size: 7.5rem;
 }

@@ -38,6 +38,8 @@ const domManipulation = (function() {
                 gameContainer.style.backgroundColor = '#000';
                 gameTile.addEventListener('click', () => {
                     gameLogic.tileInteractionLogic(gameState.accessHumanPlayerObj(), gameTile.id);
+                    gameTile.classList.add('gameTileCross');
+                    gameLogic.easyAI();
                 });
                 gameContainer.appendChild(gameTile);
             }
@@ -53,8 +55,7 @@ const domManipulation = (function() {
 const agentFactory = (name, marker) => {
     'use strict';
 
-    let _agentMoves = [];
-    let _agentWins = 0;
+    let _agentMoves = [];;
 
     const getMoves = function() {
         return _agentMoves;
@@ -64,27 +65,24 @@ const agentFactory = (name, marker) => {
         _agentMoves.push(move);
     };
 
-    const incrementWin = function() {
-        _agentWins + 1;
-    };
-
-    const returnScore = function () {
-        return _agentWins;
-    }
-
-    return { name, marker, getMoves, pushMove, incrementWin, returnScore };
+    return { name, marker, getMoves, pushMove };
 };
 
 const gameState = (function() {
     'use strict';
 
-    const humanPlayer = agentFactory(document.getElementById('nameInput').value, "X");
+    const _humanPlayer = agentFactory(document.getElementById('nameInput').value, "X");
+    const _computerPlayer = agentFactory('Computer', "O")
 
     let _tileArray = [];
 
     const accessHumanPlayerObj = function() {
-        return humanPlayer;
+        return _humanPlayer;
     };
+
+    const accessComputerPlayerObj = function () {
+        return _computerPlayer;
+    }
 
     const tileArraySetter = function(tile) {
         _tileArray.push(tile);
@@ -105,6 +103,7 @@ const gameState = (function() {
 
     return {
         accessHumanPlayerObj,
+        accessComputerPlayerObj,
         tileArraySetter,
         tileArrayGetter,
         tileArrayClear,
@@ -117,12 +116,25 @@ const gameLogic = (function() {
 
     //Game logic used in event listener for each game tile.
     const tileInteractionLogic = function(agent, selectedTile) {
-        gameState.tileArrayPop(selectedTile);
-        agent.pushMove(selectedTile);
+        if (gameState.tileArrayGetter().indexOf(selectedTile) != -1) {
+            gameState.tileArrayPop(selectedTile);
+            agent.pushMove(selectedTile);
+        } else {
+            console.log('Error!');
+        }
     }
+
+    const easyAI = function() {
+        let randomPick = Math.floor(Math.random() * gameState.tileArrayGetter().length);
+        let pickIndex = gameState.tileArrayGetter()[randomPick];
+        let tilePick = document.getElementById(pickIndex);
+        tileInteractionLogic(gameState.accessComputerPlayerObj(), pickIndex);
+        tilePick.classList.add('gameTileNought');
+    };
 
     return {
         tileInteractionLogic,
+        easyAI,
     }
 })();
 
