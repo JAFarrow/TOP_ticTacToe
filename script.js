@@ -2,7 +2,25 @@ const domManipulation = (function() {
     'use strict';
 
     //Acessing container holding gameTile divs
-    let gameContainer = document.getElementById('gameDisplay');
+    const gameContainer = document.getElementById('gameDisplay');
+    //Accessing Instantiation Buttons
+    const startButton = document.getElementById('strtBtn');
+    const resetButton = document.getElementById('rstBtn');
+    //Setting Listeners for Instatiation Buttons
+    const buttonListeners = function() {
+        startButton.addEventListener('click', () => {
+            boardInstantiation();
+            startButton.disabled = true;
+        });
+        resetButton.addEventListener('click', () => {
+            let currentTileDivs = document.querySelectorAll('.gameTile');
+            currentTileDivs.forEach((tile) => {
+                gameContainer.removeChild(tile);
+            });
+            gameState.tileArrayClear();
+            boardInstantiation();
+        })
+    };
 
     const boardInstantiation = function() {
         for (let i = 1; i <= 3; i++) {
@@ -26,32 +44,8 @@ const domManipulation = (function() {
         }
     };
 
-    const buttonCreation = function() {
-        const instanceButtonDiv = document.getElementById('instBtnDiv');
-        //Start Button
-        let startButton = document.createElement('button');
-        startButton.innerText = 'Start';
-        instanceButtonDiv.appendChild(startButton);
-        startButton.addEventListener('click', () => {
-            boardInstantiation();
-            startButton.disabled = true;
-        });
-        //Reset Button
-        let resetButton = document.createElement('button');
-        resetButton.innerText = 'Reset';
-        instanceButtonDiv.appendChild(resetButton);
-        resetButton.addEventListener('click', () => {
-            let currentTileDivs = document.querySelectorAll('.gameTile');
-            currentTileDivs.forEach((tile) => {
-                gameContainer.removeChild(tile);
-            });
-            gameState.tileArrayClear();
-            boardInstantiation();
-        });
-    };
-
     return {
-        buttonCreation,
+        buttonListeners,
     };
     
 })();
@@ -132,4 +126,4 @@ const gameLogic = (function() {
     }
 })();
 
-domManipulation.buttonCreation();
+domManipulation.buttonListeners();
