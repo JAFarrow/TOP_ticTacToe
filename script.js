@@ -1,7 +1,7 @@
-const domManipulationModule = (function() {
+const domManipulation = (function() {
     'use strict';
 
-    //Acessing Container Holding gameTile Divs
+    //Acessing container holding gameTile divs
     let gameContainer = document.getElementById('gameDisplay');
 
     const boardInstantiation = function() {
@@ -17,14 +17,11 @@ const domManipulationModule = (function() {
                     gameTile.id = `${i}c`;
                 };
                 gameState.tileArraySetter(gameTile.id);
-                gameContainer.style.backgroundColor = '#000'
-                gameContainer.appendChild(gameTile);
-                // "Tile" div interaction event listener
-                gameTile.addEventListener('click', function() {
-                    this.style.backgroundColor = 'blue';
-                    gameState.tileArrayPop(this.id);
-                    console.log(gameState.tileArrayGetter());
+                gameContainer.style.backgroundColor = '#000';
+                gameTile.addEventListener('click', () => {
+                    gameLogic.tileInteractionLogic(gameState.accessHumanPlayerObj(), gameTile.id);
                 });
+                gameContainer.appendChild(gameTile);
             }
         }
     };
@@ -35,7 +32,10 @@ const domManipulationModule = (function() {
         let startButton = document.createElement('button');
         startButton.innerText = 'Start';
         instanceButtonDiv.appendChild(startButton);
-        startButton.addEventListener('click', () => boardInstantiation());
+        startButton.addEventListener('click', () => {
+            boardInstantiation();
+            startButton.disabled = true;
+        });
         //Reset Button
         let resetButton = document.createElement('button');
         resetButton.innerText = 'Reset';
@@ -51,16 +51,46 @@ const domManipulationModule = (function() {
     };
 
     return {
-        boardInstantiation,
         buttonCreation,
     };
     
 })();
 
+const agentFactory = (name, marker) => {
+    'use strict';
+
+    let _agentMoves = [];
+    let _agentWins = 0;
+
+    const getMoves = function() {
+        return _agentMoves;
+    };
+
+    const pushMove = function(move) {
+        _agentMoves.push(move);
+    };
+
+    const incrementWin = function() {
+        _agentWins + 1;
+    };
+
+    const returnScore = function () {
+        return _agentWins;
+    }
+
+    return { name, marker, getMoves, pushMove, incrementWin, returnScore };
+};
+
 const gameState = (function() {
     'use strict';
 
+    const humanPlayer = agentFactory(document.getElementById('nameInput').value, "X");
+
     let _tileArray = [];
+
+    const accessHumanPlayerObj = function() {
+        return humanPlayer;
+    };
 
     const tileArraySetter = function(tile) {
         _tileArray.push(tile);
@@ -80,6 +110,7 @@ const gameState = (function() {
     };
 
     return {
+        accessHumanPlayerObj,
         tileArraySetter,
         tileArrayGetter,
         tileArrayClear,
@@ -87,10 +118,18 @@ const gameState = (function() {
     };
 })();
 
-// const agentFactory = (name) => {
-//     'use strict';
+const gameLogic = (function() {
+    'use strict';
 
-//     const  
-// };
+    //Game logic used in event listener for each game tile.
+    const tileInteractionLogic = function(agent, selectedTile) {
+        gameState.tileArrayPop(selectedTile);
+        agent.pushMove(selectedTile);
+    }
 
-domManipulationModule.buttonCreation();
+    return {
+        tileInteractionLogic,
+    }
+})();
+
+domManipulation.buttonCreation();
