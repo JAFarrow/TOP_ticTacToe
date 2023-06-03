@@ -19,6 +19,8 @@ const domManipulation = (function() {
             });
             gameState.tileArrayClear();
             boardInstantiation();
+            gameState.accessComputerPlayerObj().resetArray();
+            gameState.accessHumanPlayerObj().resetArray();
         })
     };
 
@@ -40,6 +42,7 @@ const domManipulation = (function() {
                     gameLogic.tileInteractionLogic(gameState.accessHumanPlayerObj(), gameTile.id);
                     gameTile.classList.add('gameTileCross');
                     gameLogic.easyAI();
+                    gameLogic.winCheck(gameState.accessHumanPlayerObj());
                 });
                 gameContainer.appendChild(gameTile);
             }
@@ -65,7 +68,11 @@ const agentFactory = (name, marker) => {
         _agentMoves.push(move);
     };
 
-    return { name, marker, getMoves, pushMove };
+    const resetArray = function() {
+        _agentMoves = [];
+    };
+
+    return { name, marker, getMoves, pushMove, resetArray };
 };
 
 const gameState = (function() {
@@ -130,11 +137,36 @@ const gameLogic = (function() {
         let tilePick = document.getElementById(pickIndex);
         tileInteractionLogic(gameState.accessComputerPlayerObj(), pickIndex);
         tilePick.classList.add('gameTileNought');
+        winCheck(gameState.accessComputerPlayerObj());
+    };
+
+    const winCheck = function(agent) {
+        let moveArray = agent.getMoves();
+        let stringifiedArray = moveArray.join('');
+
+        const regExArr = [
+            "(?=.*1a)(?=.*2a)(?=.*3a)",
+            "(?=.*1b)(?=.*2b)(?=.*3b)",
+            "(?=.*1c)(?=.*2c)(?=.*3c)",
+            "(?=.*1a)(?=.*1b)(?=.*1c)",
+            "(?=.*2a)(?=.*2b)(?=.*2c)",
+            "(?=.*3a)(?=.*3b)(?=.*3c)",
+            "(?=.*1a)(?=.*2b)(?=.*3c)",
+            "(?=.*3a)(?=.*2b)(?=.*3c)"
+        ];
+        const regExTest = new RegExp(regExArr.join('|'));
+
+        if (regExTest.test(stringifiedArray) == true) {
+            console.log("Win!");
+        } else {
+            console.log("No win..");
+        }
     };
 
     return {
         tileInteractionLogic,
         easyAI,
+        winCheck,
     }
 })();
 
