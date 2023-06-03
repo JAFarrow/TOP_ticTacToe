@@ -1,7 +1,10 @@
 const domManipulationModule = (function() {
     'use strict';
 
-    let boardInstantiation = function() {
+    //Acessing Container Holding gameTile Divs
+    let gameContainer = document.getElementById('gameDisplay');
+
+    const boardInstantiation = function() {
         for (let i = 1; i <= 3; i++) {
             for (let j = 1; j <= 3; j++) {
                 let gameTile = document.createElement('div');
@@ -14,7 +17,8 @@ const domManipulationModule = (function() {
                     gameTile.id = `${i}c`;
                 };
                 gameState.tileArraySetter(gameTile.id);
-                document.getElementById('gameDisplay').appendChild(gameTile);
+                gameContainer.style.backgroundColor = '#000'
+                gameContainer.appendChild(gameTile);
                 // "Tile" div interaction event listener
                 gameTile.addEventListener('click', function() {
                     this.style.backgroundColor = 'blue';
@@ -25,8 +29,30 @@ const domManipulationModule = (function() {
         }
     };
 
+    const buttonCreation = function() {
+        const instanceButtonDiv = document.getElementById('instBtnDiv');
+        //Start Button
+        let startButton = document.createElement('button');
+        startButton.innerText = 'Start';
+        instanceButtonDiv.appendChild(startButton);
+        startButton.addEventListener('click', () => boardInstantiation());
+        //Reset Button
+        let resetButton = document.createElement('button');
+        resetButton.innerText = 'Reset';
+        instanceButtonDiv.appendChild(resetButton);
+        resetButton.addEventListener('click', () => {
+            let currentTileDivs = document.querySelectorAll('.gameTile');
+            currentTileDivs.forEach((tile) => {
+                gameContainer.removeChild(tile);
+            });
+            gameState.tileArrayClear();
+            boardInstantiation();
+        });
+    };
+
     return {
         boardInstantiation,
+        buttonCreation,
     };
     
 })();
@@ -42,16 +68,21 @@ const gameState = (function() {
 
     const tileArrayGetter = function() {
         return _tileArray;
-    }
+    };
+
+    const tileArrayClear = function() {
+        _tileArray = [];
+    };
 
     const tileArrayPop = function(selectedTile) {
         let tileIndex = _tileArray.indexOf(`${selectedTile}`)
         _tileArray.splice(tileIndex, 1);
-    }
+    };
 
     return {
         tileArraySetter,
         tileArrayGetter,
+        tileArrayClear,
         tileArrayPop,
     };
 })();
@@ -62,4 +93,4 @@ const gameState = (function() {
 //     const  
 // };
 
-domManipulationModule.boardInstantiation();
+domManipulationModule.buttonCreation();
