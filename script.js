@@ -148,7 +148,7 @@ const gameLogic = (function() {
             "(?=.*2a)(?=.*2b)(?=.*2c)",
             "(?=.*3a)(?=.*3b)(?=.*3c)",
             "(?=.*1a)(?=.*2b)(?=.*3c)",
-            "(?=.*3a)(?=.*2b)(?=.*3c)"
+            "(?=.*1c)(?=.*2b)(?=.*3a)"
         ];
         const regExTest = new RegExp(regExArr.join('|'));
 
