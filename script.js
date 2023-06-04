@@ -39,10 +39,8 @@ const domManipulation = (function() {
                 gameState.tileArraySetter(gameTile.id);
                 gameContainer.style.backgroundColor = '#000';
                 gameTile.addEventListener('click', () => {
-                    gameLogic.tileInteractionLogic(gameState.accessHumanPlayerObj(), gameTile.id);
                     gameTile.classList.add('gameTileCross');
-                    gameLogic.easyAI();
-                    gameLogic.winCheck(gameState.accessHumanPlayerObj());
+                    gameLogic.gameFlow('player', gameTile.id);
                 });
                 gameContainer.appendChild(gameTile);
             }
@@ -134,15 +132,13 @@ const gameLogic = (function() {
     const easyAI = function() {
         let randomPick = Math.floor(Math.random() * gameState.tileArrayGetter().length);
         let pickIndex = gameState.tileArrayGetter()[randomPick];
-        let tilePick = document.getElementById(pickIndex);
-        tileInteractionLogic(gameState.accessComputerPlayerObj(), pickIndex);
-        tilePick.classList.add('gameTileNought');
-        winCheck(gameState.accessComputerPlayerObj());
+        let tileSelection = document.getElementById(pickIndex);
+        tileSelection.classList.add('gameTileNought');
+        return pickIndex;
     };
 
-    const winCheck = function(agent) {
-        let moveArray = agent.getMoves();
-        let stringifiedArray = moveArray.join('');
+    const winCheck = function(array) {
+        const stringifyArray = (array) => {return array.join('')};
 
         const regExArr = [
             "(?=.*1a)(?=.*2a)(?=.*3a)",
@@ -156,17 +152,57 @@ const gameLogic = (function() {
         ];
         const regExTest = new RegExp(regExArr.join('|'));
 
-        if (regExTest.test(stringifiedArray) == true) {
-            console.log("Win!");
-        } else {
-            console.log("No win..");
-        }
+        switch (regExTest.test(stringifyArray(array))) {
+            case true:
+                return 'win';
+                break;
+            case false:
+                if (gameState.tileArrayGetter().length === 0) {
+                    return 'tie';
+                } else {
+                    return false;
+                }
+        };
+    };
+
+    const gameFlow = function(agent, selectedTile) {
+        switch(agent) {
+            case 'player':
+
+                let player = gameState.accessHumanPlayerObj();
+                tileInteractionLogic(player, selectedTile);
+
+                let playerWinTieCheck = winCheck(player.getMoves());
+                switch(playerWinTieCheck) {
+                    case false:
+                        gameFlow('computer', easyAI());
+                        break;
+                    case 'win':
+                        console.log('Player Win!');
+                        break;
+                    case 'tie':
+                        console.log('Tie!');
+                };
+                break;
+
+            case 'computer':
+
+                let computer = gameState.accessComputerPlayerObj();
+                tileInteractionLogic(computer, selectedTile);
+
+                let computerWinTieCheck = winCheck(computer.getMoves());
+                switch(computerWinTieCheck) {
+                    case 'win':
+                        console.log('Computer Win!');
+                        break;
+                    case 'tie':
+                        console.log('Tie!');
+                }
+        };
     };
 
     return {
-        tileInteractionLogic,
-        easyAI,
-        winCheck,
+        gameFlow,
     }
 })();
 
