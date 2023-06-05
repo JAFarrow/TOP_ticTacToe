@@ -6,22 +6,37 @@ const domManipulation = (function() {
     //Accessing Instantiation Buttons
     const startButton = document.getElementById('strtBtn');
     const resetButton = document.getElementById('rstBtn');
+    //Accessing Setting Buttons
+    const selectTokenButtons = document.querySelectorAll('.tokenSelectionBtn');
     //Setting Listeners for Instatiation Buttons
     const buttonListeners = function() {
+
         startButton.addEventListener('click', () => {
             boardInstantiation();
+            if (gameState.getPlayerToken() != 'X') {
+                gameLogic.gameFlow('computer', gameLogic.easyAI());
+            };
             startButton.disabled = true;
         });
+
         resetButton.addEventListener('click', () => {
             let currentTileDivs = document.querySelectorAll('.gameTile');
             currentTileDivs.forEach((tile) => {
                 gameContainer.removeChild(tile);
             });
-            gameState.tileArrayClear();
+            gameState.resetState();
             boardInstantiation();
-            gameState.accessComputerPlayerObj().resetArray();
-            gameState.accessHumanPlayerObj().resetArray();
-        })
+            if (gameState.getPlayerToken() === 'O') {
+                gameLogic.gameFlow('computer', gameLogic.easyAI());
+            }
+        });
+
+        selectTokenButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                gameState.setPlayerToken(button.value);
+            })
+        });
+
     };
 
     const boardInstantiation = function() {
@@ -39,12 +54,15 @@ const domManipulation = (function() {
                 gameState.tileArraySetter(gameTile.id);
                 gameContainer.style.backgroundColor = '#000';
                 gameTile.addEventListener('click', () => {
-                    gameTile.classList.add('gameTileCross');
+                    gameTile.classList.add(
+                        gameState.getPlayerToken() === 'X' ?
+                         'gameTileCross' : 'gameTileNought'
+                    );
                     gameLogic.gameFlow('player', gameTile.id);
                 });
                 gameContainer.appendChild(gameTile);
-            }
-        }
+            };
+        };
     };
 
     return {
@@ -53,10 +71,10 @@ const domManipulation = (function() {
     
 })();
 
-const agentFactory = (name, marker) => {
+const agentFactory = (name) => {
     'use strict';
 
-    let _agentMoves = [];;
+    let _agentMoves = [];
 
     const getMoves = function() {
         return _agentMoves;
@@ -70,13 +88,15 @@ const agentFactory = (name, marker) => {
         _agentMoves = [];
     };
 
-    return { name, marker, getMoves, pushMove, resetArray };
+    return { name, getMoves, pushMove, resetArray };
 };
 
 const gameState = (function() {
     'use strict';
 
-    const _humanPlayer = agentFactory(document.getElementById('nameInput').value, "X");
+    let _playerToken = '';
+
+    const _humanPlayer = agentFactory('Player', "X");
     const _computerPlayer = agentFactory('Computer', "O")
 
     let _tileArray = [];
@@ -104,6 +124,20 @@ const gameState = (function() {
     const tileArrayPop = function(selectedTile) {
         let tileIndex = _tileArray.indexOf(`${selectedTile}`)
         _tileArray.splice(tileIndex, 1);
+    };;
+
+    const setPlayerToken = function(token) {
+        _playerToken = token;
+    };
+
+    const getPlayerToken = function() {
+        return _playerToken;
+    };
+
+   const resetState = function() {
+        tileArrayClear();
+        accessHumanPlayerObj().resetArray();
+        accessComputerPlayerObj().resetArray();
     };
 
     return {
@@ -113,6 +147,9 @@ const gameState = (function() {
         tileArrayGetter,
         tileArrayClear,
         tileArrayPop,
+        setPlayerToken,
+        getPlayerToken,
+        resetState,
     };
 })();
 
@@ -133,7 +170,10 @@ const gameLogic = (function() {
         let randomPick = Math.floor(Math.random() * gameState.tileArrayGetter().length);
         let pickIndex = gameState.tileArrayGetter()[randomPick];
         let tileSelection = document.getElementById(pickIndex);
-        tileSelection.classList.add('gameTileNought');
+        tileSelection.classList.add(
+            gameState.getPlayerToken() === 'X' ?
+            'gameTileNought' : 'gameTileCross'
+        );
         return pickIndex;
     };
 
@@ -178,7 +218,7 @@ const gameLogic = (function() {
                         gameFlow('computer', easyAI());
                         break;
                     case 'win':
-                        console.log('Player Win!');
+                        console.log(`${document.getElementById('nameInput').value} won!`);
                         break;
                     case 'tie':
                         console.log('Tie!');
@@ -203,6 +243,7 @@ const gameLogic = (function() {
 
     return {
         gameFlow,
+        easyAI,
     }
 })();
 
