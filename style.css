@@ -94,10 +94,12 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
 }
 
 #gameDisplay {
     display: grid;
+    position: absolute;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr;
     align-items: stretch;
@@ -106,6 +108,77 @@ main {
     height: 45%;
     background-color: #fff;
     margin-right: 11%;
+}
+
+#gameOverDisplay {
+    position: absolute;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    z-index: 10;
+    width: 45%;
+    height: 55%;
+    background-color: rgba(0, 0, 0, 0.5);
+    margin-right: 11%;
+}
+
+#gameOverWinner {
+    margin-top: 4rem;
+}
+
+#scoreHeader {
+    margin-top: 2rem;
+    text-decoration: underline;
+}
+
+#gameOverTallyContainer {
+    display: flex;
+    margin-top: 2rem;
+    width: 60%;
+    justify-content: space-around;
+    margin-left: 4%;
+}
+
+.individualTallyContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#gameOverSelectionContainer {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 4rem;
+    width: 100%;
+}
+
+.gameOverSelectionDiv {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.gameOverSelectionButtonContainer {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 1.5rem;
+}
+
+.gameOverSelectionButtonContainer button {
+    padding: .2rem;
+    width: 8rem;
+    height: 3rem;
+}
+
+#gameOverDisplay > button{
+    margin-bottom: 4rem;
+    margin-top: auto;
+    padding: .2rem;
+    width: 12rem;
+    height: 3rem;
 }
 
 footer {

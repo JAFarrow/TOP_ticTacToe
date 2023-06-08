@@ -5,30 +5,43 @@ const domManipulation = (function() {
     const gameContainer = document.getElementById('gameDisplay');
     //Accessing Instantiation Buttons
     const startButton = document.getElementById('strtBtn');
-    const resetButton = document.getElementById('rstBtn');
-    //Accessing Setting Buttons
+    const resetButtons = document.querySelectorAll('.resetGameButton');
+    //Accessing select token buttons
     const selectTokenButtons = document.querySelectorAll('.tokenSelectionBtn');
+    //Accessing gameOverDisplay elements
+    const gameOverDisplay = document.getElementById('gameOverDisplay');
+    const gameOverWinnerAnnouncement = document.getElementById('gameOverWinner');
+    const gameOverHumanTally = document.getElementById('humanTally');
+    const gameOverTieTally = document.getElementById('tieTally');
+    const gameOverComputerTally = document.getElementById('computerTally');
+    //Accessing difficulty setting buttons
+    const setDifficultyButtons = document.querySelectorAll('.setDifficultyButton');
     //Setting Listeners for Instatiation Buttons
     const buttonListeners = function() {
 
         startButton.addEventListener('click', () => {
             boardInstantiation();
             if (gameState.getPlayerToken() != 'X') {
-                gameLogic.gameFlow('computer', gameLogic.impossibleAI());
+                gameLogic.gameFlow('computer', gameState.returnDifficulty());
             };
             startButton.disabled = true;
         });
 
-        resetButton.addEventListener('click', () => {
-            let currentTileDivs = document.querySelectorAll('.gameTile');
-            currentTileDivs.forEach((tile) => {
-                gameContainer.removeChild(tile);
+        resetButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                if (gameOverDisplay.style.display === 'flex') {
+                    gameOverDisplay.style.display = 'none';
+                };
+                let currentTileDivs = document.querySelectorAll('.gameTile');
+                currentTileDivs.forEach((tile) => {
+                    gameContainer.removeChild(tile);
+                });
+                gameState.resetState();
+                boardInstantiation();
+                if (gameState.getPlayerToken() === 'O') {
+                    gameLogic.gameFlow('computer', gameState.returnDifficulty());
+                }
             });
-            gameState.resetState();
-            boardInstantiation();
-            if (gameState.getPlayerToken() === 'O') {
-                gameLogic.gameFlow('computer', gameLogic.impossibleAI());
-            }
         });
 
         selectTokenButtons.forEach((button) => {
@@ -37,6 +50,53 @@ const domManipulation = (function() {
             })
         });
 
+        setDifficultyButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                gameState.setDifficulty(button.value);
+            })
+        });
+    };
+
+    const gameOverInfoController = (function() {
+        const setWinner = function(str) {
+            switch(str) {
+                case 'Tie!':
+                    gameOverWinnerAnnouncement.innerHTML = str;
+                    break;
+                case 'Player':
+                    gameOverWinnerAnnouncement.innerHTML = `${document.getElementById('nameInput').value} Won!`;
+                    break;
+                case 'Computer':
+                    gameOverWinnerAnnouncement.innerHTML = `${str} Won!`;
+            }
+        };
+
+        const setPlayerScore = function() {
+            gameOverHumanTally.innerText = gameState.returnPlayerTally();
+        };
+
+        const setTieScore = function() {
+            gameOverTieTally.innerText = gameState.returnTieTally();
+        };
+
+        const setComputerScore = function() {
+            gameOverComputerTally.innerText = gameState.returnComputerTally();
+        };
+
+        return {
+            setWinner,
+            setPlayerScore,
+            setTieScore,
+            setComputerScore
+        }
+    })();
+
+    const gameOverHandler = function(winner) {
+        gameOverInfoController.setWinner(winner);
+        gameOverInfoController.setPlayerScore();
+        gameOverInfoController.setTieScore();
+        gameOverInfoController.setComputerScore();
+        gameOverDisplay.style.display = 'flex';
     };
 
     const boardInstantiation = function() {
@@ -63,6 +123,7 @@ const domManipulation = (function() {
 
     return {
         buttonListeners,
+        gameOverHandler
     };
     
 })();
@@ -92,14 +153,10 @@ const agentFactory = (name) => {
 };
 
 const gameState = (function() {
-    'use strict';
-
-    let _playerToken = '';
+    'use strict'; 
 
     const _humanPlayer = agentFactory('Player');
-    const _computerPlayer = agentFactory('Computer')
-
-    let _tileArray = [];
+    const _computerPlayer = agentFactory('Computer');
 
     const accessHumanPlayerObj = function() {
         return _humanPlayer;
@@ -107,7 +164,9 @@ const gameState = (function() {
 
     const accessComputerPlayerObj = function () {
         return _computerPlayer;
-    }
+    };
+
+    let _tileArray = [];
 
     const tileArraySetter = function(tile) {
         _tileArray.push(tile);
@@ -128,7 +187,9 @@ const gameState = (function() {
 
     const cloneTileArray = function() {
         return [..._tileArray];
-    }
+    };
+
+    let _playerToken = '';
 
     const setPlayerToken = function(token) {
         _playerToken = token;
@@ -144,6 +205,53 @@ const gameState = (function() {
         accessComputerPlayerObj().resetArray();
     };
 
+    let _selectedDifficulty = 'easy';
+
+    const setDifficulty = function(str) {
+        _selectedDifficulty = str;
+    };
+
+    const returnDifficulty = function() {
+        switch(_selectedDifficulty) {
+            case 'easy':
+                return gameLogic.easyAI();
+            case 'hard':
+                return gameLogic.hardAI();
+            case 'impossible':
+                return gameLogic.impossibleAI();
+        };
+    };
+
+    let _playerTally = 0;
+
+    const returnPlayerTally = function() {
+        return _playerTally;
+    };
+
+    const incrementPlayerTally = function() {
+        _playerTally++;
+    };
+
+    let _tieTally = 0;
+
+    const returnTieTally = function() {
+        return _tieTally;
+    };
+
+    const incrementTieTally = function() {
+        _tieTally++;
+    };
+
+    let _computerTally = 0;
+
+    const returnComputerTally = function() {
+        return _computerTally;
+    };
+
+    const incrementComputerTally = function() {
+        _computerTally++;
+    };
+
     return {
         accessHumanPlayerObj,
         accessComputerPlayerObj,
@@ -155,6 +263,14 @@ const gameState = (function() {
         setPlayerToken,
         getPlayerToken,
         resetState,
+        setDifficulty,
+        returnDifficulty,
+        returnPlayerTally,
+        incrementPlayerTally,
+        returnTieTally,
+        incrementTieTally,
+        returnComputerTally,
+        incrementComputerTally
     };
 })();
 
@@ -198,22 +314,26 @@ const gameLogic = (function() {
         let humanMoves = gameState.accessHumanPlayerObj().cloneAgentMoves();
 
         const bestMove = function(gameBoard, currentComputerMoves, currentHumanMoves) {
-
-            let bestScore = -1000;
-            let bestMove = '';
-            for (let move = 0; move <= gameBoard.length - 1; move++) {
-                let newMove = gameBoard[move];
-                let gameBoardMinusMove = gameBoard.toSpliced(move, 1);
-                let computerMovesPlusNewMove = [...currentComputerMoves];
-                computerMovesPlusNewMove.push(newMove);
-                let newScore = miniMax(gameBoardMinusMove, computerMovesPlusNewMove, currentHumanMoves, gameBoardMinusMove.length, false);
-                if (newScore > bestScore) {
-                    bestScore = newScore;
-                    bestMove = newMove;
+            if (gameBoard.length === 9) {
+                let cornerSpots = ['1a', '1c', '3a', '3c'];
+                return cornerSpots[Math.floor(Math.random() * 4)];
+            } else {
+                let bestScore = -1000;
+                let bestMove = '';
+                for (let move = 0; move <= gameBoard.length - 1; move++) {
+                    let newMove = gameBoard[move];
+                    let gameBoardMinusMove = gameBoard.toSpliced(move, 1);
+                    let computerMovesPlusNewMove = [...currentComputerMoves];
+                    computerMovesPlusNewMove.push(newMove);
+                    let newScore = miniMax(gameBoardMinusMove, computerMovesPlusNewMove, currentHumanMoves, gameBoardMinusMove.length, false);
+                    if (newScore > bestScore) {
+                        bestScore = newScore;
+                        bestMove = newMove;
+                    };
+                    console.log(`Best Move = ${bestMove} & Best Score = ${bestScore}`);
                 };
-                console.log(`Best Move = ${bestMove} & Best Score = ${bestScore}`);
+                return bestMove;
             };
-            return bestMove;
         };
 
         const miniMax = function(gameBoard, maxiMoves, miniMoves, depth, isMaximiser) {
@@ -287,13 +407,15 @@ const gameLogic = (function() {
                 switch(winCheck(gameState.accessHumanPlayerObj().getMoves())) {
                     case false:
                         if (gameState.tileArrayGetter().length === 0) {
-                            console.log('Tie!');
+                            gameState.incrementTieTally();
+                            domManipulation.gameOverHandler('Tie!');
                         } else {
-                            gameFlow('computer', impossibleAI());
-                        }
+                            gameFlow('computer', gameState.returnDifficulty());
+                        };
                         break;
                     case true:
-                        console.log(`${document.getElementById('nameInput').value} Win!`);
+                        gameState.incrementPlayerTally();
+                        domManipulation.gameOverHandler('Player');
                 };
                 break;
 
@@ -303,11 +425,13 @@ const gameLogic = (function() {
 
                 switch(winCheck(gameState.accessComputerPlayerObj().getMoves())) {
                     case true:
-                        console.log('Computer Win!');
+                        gameState.incrementComputerTally();
+                        domManipulation.gameOverHandler('Computer');
                         break;
                     case false:
                         if (gameState.tileArrayGetter().length === 0) {
-                            console.log('Tie!')
+                            gameState.incrementTieTally();
+                            domManipulation.gameOverHandler('Tie!');
                         };
                 };
         };

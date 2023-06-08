@@ -29,17 +29,52 @@
             </div>
             <div class="sbDiv" id="instBtnDiv">
                 <button class="sdBtn" id="strtBtn">Start</button>
-                <button class="sdBtn" id="rstBtn">Reset</button>
+                <button class="sdBtn resetGameButton">Reset</button>
             </div>
             <div class="sbDiv">
-                <button class="sdBtn" id="ezBtn">Easy</button>
-                <button class="sdBtn" id="chlngBtn">Challenge</button>
-                <button class="sdBtn" id="impsbleBtn">Impossible</button>
+                <button class="sdBtn setDifficultyButton" value="easy">Easy</button>
+                <button class="sdBtn setDifficultyButton" value="hard">Challenge</button>
+                <button class="sdBtn setDifficultyButton" value="impossible">Impossible</button>
             </div>
         </div>
 
         <main>
-            <div id="announcementDisplay"></div>
+            <div id="gameOverDisplay">
+                <h1 id="gameOverWinner"> Player Won!</h1>
+                <h2 id="scoreHeader">Score</h2>
+                <div id="gameOverTallyContainer">
+                    <div class="individualTallyContainer">
+                        <h3 id="humanTallyName">Player</h3>
+                        <h5 id="humanTally">0</h5>
+                    </div>
+                    <div class="individualTallyContainer">
+                        <h3>Tie</h3>
+                        <h5 id="tieTally">0</h5>
+                    </div>
+                    <div class="individualTallyContainer">
+                        <h3>Computer</h3>
+                        <h5 id="computerTally">0</h5>
+                    </div>
+                </div>
+                <div id="gameOverSelectionContainer">
+                    <div class="gameOverSelectionDiV">
+                        <h3>Change Marker?</h3>
+                        <div class="gameOverSelectionButtonContainer">
+                            <button class="tokenSelectionBtn">X</button>
+                            <button class="tokenSelectionBtn">O</button>
+                        </div>
+                    </div>
+                    <div class="gameOverSelectionDiv">
+                        <h3>Change Difficulty?</h3>
+                        <div class="gameOverSelectionButtonContainer">
+                            <button class="setDifficultyButton" value="easy">Easy</button>
+                            <button class="setDifficultyButton" value="hard">Challenge</button>
+                            <button class="setDifficultyButton" value="impossible">Impossible</button>
+                        </div>
+                    </div>
+                </div>
+                <button class="resetGameButton">Play Again!</button>
+            </div>
             <div id="gameDisplay"></div>
         </main>
 
