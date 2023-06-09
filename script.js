@@ -300,12 +300,60 @@ const gameLogic = (function() {
         } else {
             console.log('Error!');
         }
-    }
+    };
+
+    const randomCornerTile = function() {
+        const cornerSpots = ['1a', '3a', '1c', '3c'];
+        return cornerSpots[Math.floor(Math.random() *4)];
+    };
 
     const easyAI = function() {
         let randomPick = Math.floor(Math.random() * gameState.tileArrayGetter().length);
         let pickIndex = gameState.tileArrayGetter()[randomPick];
         return pickIndex;
+    };
+
+    const hardAI = function() {
+        let gameBoard = gameState.cloneTileArray();
+        let computerMoves = gameState.accessComputerPlayerObj().cloneAgentMoves();
+        let humanMoves = gameState.accessHumanPlayerObj().cloneAgentMoves();
+
+        const evalMove = function(moveArray) {
+            switch(winCheck(moveArray)) {
+                case true:
+                    return 10;
+                case false:
+                    return 0;
+            };
+        };
+
+        if (gameBoard.length === 9) {
+            return randomCornerTile(); 
+        } else if (humanMoves.indexOf('2b') === -1 && computerMoves.indexOf('2b') === -1) {
+            return '2b';
+        } else {
+            let nextMove = '';
+            for ( let move = 0; move <= gameBoard.length; move++) {
+                let newMove = gameBoard[move];
+                let humanMovesPlusMove = [...humanMoves];
+                humanMovesPlusMove.push(newMove);
+                let computerMovesPlusMove = [...computerMoves];
+                computerMovesPlusMove.push(newMove);
+                let newComputerScore = evalMove(computerMovesPlusMove);
+                if (newComputerScore > 0) {
+                    nextMove = newMove;
+                    break;
+                };
+                let newHumanScore = evalMove(humanMovesPlusMove);
+                if (newHumanScore > 0) {
+                    nextMove = newMove;
+                    break;
+                } else {
+                    nextMove = gameBoard[Math.floor(Math.random() * gameBoard.length)];
+                };
+            };
+            return nextMove;
+        };
     };
 
     const impossibleAI = function() {
@@ -315,8 +363,7 @@ const gameLogic = (function() {
 
         const bestMove = function(gameBoard, currentComputerMoves, currentHumanMoves) {
             if (gameBoard.length === 9) {
-                let cornerSpots = ['1a', '1c', '3a', '3c'];
-                return cornerSpots[Math.floor(Math.random() * 4)];
+                return randomCornerTile();
             } else {
                 let bestScore = -1000;
                 let bestMove = '';
@@ -330,7 +377,7 @@ const gameLogic = (function() {
                         bestScore = newScore;
                         bestMove = newMove;
                     };
-                    console.log(`Best Move = ${bestMove} & Best Score = ${bestScore}`);
+                    // console.log(`Best Move = ${bestMove} & Best Score = ${bestScore}`);      logging each move and respective value for testing
                 };
                 return bestMove;
             };
@@ -441,6 +488,7 @@ const gameLogic = (function() {
         gameFlow,
         easyAI,
         impossibleAI,
+        hardAI,
     }
 })();
 
