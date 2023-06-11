@@ -6,8 +6,13 @@ const domManipulation = (function() {
     //Accessing Instantiation Buttons
     const startButton = document.getElementById('strtBtn');
     const resetButtons = document.querySelectorAll('.resetGameButton');
+    //Accessing sidebar warning
+    const warningDialogue = document.getElementById('warning');
     //Accessing select token buttons
     const selectTokenButtons = document.querySelectorAll('.tokenSelectionBtn');
+    //Accessing token sets
+    const allXTokenButtons = document.querySelectorAll('.tokenX');
+    const allOTokenButtons = document.querySelectorAll('.tokenO');
     //Accessing gameOverDisplay elements
     const gameOverDisplay = document.getElementById('gameOverDisplay');
     const gameOverWinnerAnnouncement = document.getElementById('gameOverWinner');
@@ -16,6 +21,12 @@ const domManipulation = (function() {
     const gameOverComputerTally = document.getElementById('computerTally');
     //Accessing difficulty setting buttons
     const setDifficultyButtons = document.querySelectorAll('.setDifficultyButton');
+    //Accessing sets of difficulty buttons
+    const allEasyButtons = document.querySelectorAll('.difficultyEasy');
+    const allHardButtons = document.querySelectorAll('.difficultyHard');
+    const allImpossibleButtons = document.querySelectorAll('.difficultyImpossible');
+    //Accessing all settings buttons
+    const allSettingButtons = document.querySelectorAll('.settingButton');
     //Setting Listeners for Instatiation Buttons
     const buttonListeners = function() {
 
@@ -47,13 +58,80 @@ const domManipulation = (function() {
         selectTokenButtons.forEach((button) => {
             button.addEventListener('click', () => {
                 gameState.setPlayerToken(button.value);
-            })
+                switch(gameState.getPlayerToken()) {
+                    case 'X':
+                        allXTokenButtons.forEach((button) => {
+                            button.disabled = true;
+                        });
+                        allOTokenButtons.forEach((button) => {
+                            button.disabled = false;
+                        });
+                        break;
+                    case 'O':
+                        allXTokenButtons.forEach((button) => {
+                            button.disabled = false;
+                        });
+                        allOTokenButtons.forEach((button) => {
+                            button.disabled = true;
+                        });
+                };
+            });
         });
 
         setDifficultyButtons.forEach((button) => {
             button.addEventListener('click', () => {
                 gameState.setDifficulty(button.value);
-            })
+                switch(gameState.returnDifficultyAsString()) {
+                    case 'easy':
+                        allEasyButtons.forEach((button) => {
+                            button.disabled = true;
+                        });
+                        allHardButtons.forEach((button) => {
+                            button.disabled = false;
+                        });
+                        allImpossibleButtons.forEach((button) => {
+                            button.disabled = false;
+                        });
+                        break;
+                    case 'hard':
+                        allEasyButtons.forEach((button) => {
+                            button.disabled = false;
+                        });
+                        allHardButtons.forEach((button) => {
+                            button.disabled = true;
+                        });
+                        allImpossibleButtons.forEach((button) => {
+                            button.disabled = false;
+                        });
+                        break;
+                    case 'impossible':
+                        allEasyButtons.forEach((button) => {
+                            button.disabled = false;
+                        });
+                        allHardButtons.forEach((button) => {
+                            button.disabled = false;
+                        });
+                        allImpossibleButtons.forEach((button) => {
+                            button.disabled = true;
+                        });
+                };
+            });
+        });
+
+        const initialEnableStart = function() {
+            if (gameState.returnDifficultyAsString() != '' && gameState.getPlayerToken() != '') {
+                startButton.disabled = false;
+                warningDialogue.innerHTML = '<p>Good luck and have fun!';
+            };
+            if (startButton.disabled === false) {
+                allSettingButtons.forEach((button) => {
+                    button.removeEventListener('click', initialEnableStart);
+                });
+            };
+        };
+
+        allSettingButtons.forEach((button) => {
+            button.addEventListener('click', initialEnableStart);
         });
     };
 
@@ -112,7 +190,7 @@ const domManipulation = (function() {
                     gameTile.id = `${i}c`;
                 };
                 gameState.tileArraySetter(gameTile.id);
-                gameContainer.style.backgroundColor = '#000';
+                gameContainer.style.backgroundColor = '#696d86';
                 gameTile.addEventListener('click', () => {
                     gameLogic.gameFlow('player', gameTile.id);
                 });
@@ -205,11 +283,15 @@ const gameState = (function() {
         accessComputerPlayerObj().resetArray();
     };
 
-    let _selectedDifficulty = 'easy';
+    let _selectedDifficulty = '';
 
     const setDifficulty = function(str) {
         _selectedDifficulty = str;
     };
+
+    const returnDifficultyAsString = function() {
+        return _selectedDifficulty;
+    }
 
     const returnDifficulty = function() {
         switch(_selectedDifficulty) {
@@ -265,6 +347,7 @@ const gameState = (function() {
         resetState,
         setDifficulty,
         returnDifficulty,
+        returnDifficultyAsString,
         returnPlayerTally,
         incrementPlayerTally,
         returnTieTally,

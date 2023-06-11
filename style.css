@@ -1,3 +1,15 @@
+:root {
+    --top-elements: #696d86;
+    --faded-top-elements: rgba(105, 109, 134, 0.5);
+    --less-faded-top-elements: rgba(105, 109, 134, 0.8);
+    --main-bg: #e8e9ed;
+    --accent-lighter: ;
+    --accent: #83957e;
+    --accent-darker: #626d5f;
+    --main-font: #14151a;
+    --alt-font: #fff;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -32,6 +44,26 @@ p {
     font-size: 1.2rem;
 }
 
+label {
+    font-size: 1.2rem;
+}
+
+button {
+    background-color: var(--accent);
+    color: var(--alt-font);
+    border: .1rem solid var(--top-elements);
+    border-radius: .1rem;
+}
+
+button:hover {
+    background-color: var(--accent-darker);    
+}
+
+button:disabled {
+    background-color: var(--main-bg);
+    color: var(--main-font);
+}
+
 body {
     height: 100vh;
     width: 100vw;
@@ -41,41 +73,72 @@ body {
 }
 
 header {
+    z-index: 10;
     grid-column: span 2;
     grid-row: 1;
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: var(--top-elements);
+    color: var(--alt-font);
+    box-shadow: 0rem .5rem .2rem var(--top-elements);
 }
 
 #sidebar {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     grid-column: 1;
     grid-row: 2;
-    margin-right: auto;
+    background-color: var(--main-bg);
+    color: var(--main-font);
+    font-weight: bold;
 }
 
 .sbDiv {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding: .5rem;
-    margin-bottom: 4rem;
+    padding: 0 .5rem;
+    margin-bottom: 2rem;
+    max-width: 80%;
 }
 
 .sbDiv > button {
-    width: 12rem;
     height: 3rem;
     margin: .3rem;
 }
 
 .sbDiv input {
-    width: 12rem;
     margin: .3rem;
-    padding: .1rem 0 .1rem .3rem;
+    padding: .1rem .3rem;
+    background-color: var(--main-bg);
+    border: .1rem solid var(--top-elements);
+}
+
+.sbDiv input:hover {
+    background-color: var(--faded-top-elements);
+    color: var(--alt-font);
 }
 
 .sbDiv label {
     font-size: 1.4rem;
+    margin: .3rem;
+}
+
+.sbTextDiv {
+    justify-content: center;
+    min-height: 5rem;
+    margin-left: .3rem;
+}
+
+#strtBtn {
+    box-shadow: inset -.2rem -.2rem var(--accent-darker);
+    border: .15rem solid var(--top-elements);
+}
+
+#strtBtn:disabled {
+    box-shadow: none;
+    border: .1rem solid var(--top-elements);
 }
 
 #tokenSelectionDiv {
@@ -83,7 +146,7 @@ header {
 }
 
 .tokenSelectionBtn {
-    width: 5.7rem;
+    width: 45%;
     height: 1.8rem;
     margin: .3rem;
 }
@@ -95,6 +158,7 @@ main {
     justify-content: center;
     align-items: center;
     position: relative;
+    background-color: var(--main-bg);
 }
 
 #gameDisplay {
@@ -106,7 +170,7 @@ main {
     gap: 1rem;
     width: 35%;
     height: 45%;
-    background-color: #fff;
+    background-color: var(--main-bg);
     margin-right: 11%;
 }
 
@@ -118,8 +182,11 @@ main {
     z-index: 10;
     width: 45%;
     height: 55%;
-    background-color: rgba(0, 0, 0, 0.5);
     margin-right: 11%;
+    background-color: var(--less-faded-top-elements);
+    color: var(--alt-font);
+    border: .3rem solid var(--top-elements);
+    border-radius: .5rem;
 }
 
 #gameOverWinner {
@@ -128,7 +195,6 @@ main {
 
 #scoreHeader {
     margin-top: 2rem;
-    text-decoration: underline;
 }
 
 #gameOverTallyContainer {
@@ -136,7 +202,7 @@ main {
     margin-top: 2rem;
     width: 60%;
     justify-content: space-around;
-    margin-left: 4%;
+    margin-left: 5%;
 }
 
 .individualTallyContainer {
@@ -148,10 +214,11 @@ main {
 
 #gameOverSelectionContainer {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
     margin-top: 4rem;
     width: 100%;
+    padding: 0 5rem;
 }
 
 .gameOverSelectionDiv {
@@ -162,15 +229,21 @@ main {
 
 .gameOverSelectionButtonContainer {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     width: 100%;
     margin-top: 1.5rem;
 }
 
 .gameOverSelectionButtonContainer button {
     padding: .2rem;
-    width: 8rem;
+    margin: .1rem;
     height: 3rem;
+    width: 7.5rem;
+    border: .2rem solid var(--top-elements);
+}
+
+.gameOverButton:disabled {
+    background: none;
 }
 
 #gameOverDisplay > button{
@@ -179,19 +252,31 @@ main {
     padding: .2rem;
     width: 12rem;
     height: 3rem;
+    border: .2rem solid var(--top-elements);
 }
 
+/* .allGameOverElements {
+    background-color: var(--less-faded-top-elements);
+    padding: .5rem;
+} */
+
 footer {
-    grid-column: 2;
+    grid-column: span 2;
     grid-row: 3;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-right: 10%;
+    background-color: var(--main-bg);
+    white-space: pre;
+}
+
+footer a {
+    font-size: 2.4rem;
+    color: var(--accent-darker);
 }
 
 .gameTile {
-    background-color: #fff;
+    background-color: var(--main-bg);
     background-repeat: no-repeat;
     background-position: center;
 }
@@ -203,6 +288,5 @@ footer {
 
 .gameTileNought {
     background-image: url(assets/nought.svg);
-
     background-size: 7.5rem;
 }
