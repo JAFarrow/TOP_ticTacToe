@@ -27,7 +27,7 @@ const domManipulation = (function() {
     const allImpossibleButtons = document.querySelectorAll('.difficultyImpossible');
     //Accessing all settings buttons
     const allSettingButtons = document.querySelectorAll('.settingButton');
-    //Setting Listeners for Instatiation Buttons
+
     const buttonListeners = function() {
 
         startButton.addEventListener('click', () => {
@@ -260,7 +260,9 @@ const gameState = (function() {
 
     const tileArrayPop = function(selectedTile) {
         let tileIndex = _tileArray.indexOf(`${selectedTile}`)
-        _tileArray = _tileArray.toSpliced(tileIndex, 1);
+        let newTileArray = [..._tileArray];
+        newTileArray.splice(tileIndex, 1);
+        _tileArray = newTileArray;
     };
 
     const cloneTileArray = function() {
@@ -452,7 +454,8 @@ const gameLogic = (function() {
                 let bestMove = '';
                 for (let move = 0; move <= gameBoard.length - 1; move++) {
                     let newMove = gameBoard[move];
-                    let gameBoardMinusMove = gameBoard.toSpliced(move, 1);
+                    let gameBoardMinusMove = [...gameBoard];
+                    gameBoardMinusMove.splice(move, 1)
                     let computerMovesPlusNewMove = [...currentComputerMoves];
                     computerMovesPlusNewMove.push(newMove);
                     let newScore = miniMax(gameBoardMinusMove, computerMovesPlusNewMove, currentHumanMoves, gameBoardMinusMove.length, false);
@@ -483,7 +486,8 @@ const gameLogic = (function() {
             if (isMaximiser) {
                 let maxiBestScore = -1000;
                 for (let move = 0; move <= depth - 1; move++) {
-                    let gameBoardMinusMove = gameBoard.toSpliced(move, 1);
+                    let gameBoardMinusMove = [...gameBoard];
+                    gameBoardMinusMove.splice(move, 1);
                     let maxiArrayPlusMove = [...maxiMoves];
                     maxiArrayPlusMove.push(gameBoard[move]);
                     let miniMovesClone = [...miniMoves];
@@ -493,7 +497,8 @@ const gameLogic = (function() {
             } else {
                 let miniBestScore = 1000;
                 for (let move = 0; move <= depth - 1; move++) {
-                    let gameBoardMinusMove = gameBoard.toSpliced(move, 1);
+                    let gameBoardMinusMove = [...gameBoard];
+                    gameBoardMinusMove.splice(move, 1)
                     let miniArrayPlusMove = [...miniMoves];
                     miniArrayPlusMove.push(gameBoard[move]);
                     let maxiMovesClone = [...maxiMoves];
